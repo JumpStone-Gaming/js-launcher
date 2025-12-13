@@ -598,10 +598,10 @@
     "@sigstore/core" "^2.0.0"
     "@sigstore/protobuf-specs" "^0.4.0"
 
-"@tauri-apps/api@^2.0.0", "@tauri-apps/api@^2.5.0":
-  version "2.5.0"
-  resolved "https://registry.npmjs.org/@tauri-apps/api/-/api-2.5.0.tgz"
-  integrity sha512-Ldux4ip+HGAcPUmuLT8EIkk6yafl5vK0P0c0byzAKzxJh7vxelVtdPONjfgTm96PbN24yjZNESY8CKo8qniluA==
+"@tauri-apps/api@^2.0.0", "@tauri-apps/api@^2.9.1":
+  version "2.9.1"
+  resolved "https://registry.npmjs.org/@tauri-apps/api/-/api-2.9.1.tgz"
+  integrity sha512-IGlhP6EivjXHepbBic618GOmiWe4URJiIeZFlB7x3czM0yDHHYviH1Xvoiv4FefdkQtn6v7TuwWCRfOGdnVUGw==
 
 "@tauri-apps/cli-win32-x64-msvc@2.5.0":
   version "2.5.0"
@@ -1070,9 +1070,9 @@ camera-controls@^2.9.0:
   integrity sha512-KnaKdcvkBJ1Irbrzl8XD6WtZltkRjp869Jx8c0ujs9K+9WD+1D7ryBsCiVqJYUqt6i/HR5FxT7RLASieUD+Q5w==
 
 caniuse-lite@^1.0.30001688, caniuse-lite@^1.0.30001702:
-  version "1.0.30001715"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001715.tgz"
-  integrity sha512-7ptkFGMm2OAOgvZpwgA4yjQ5SQbrNVGdRjzH0pBdy1Fasvcr+KAeECmbCAECzTuDuoX0FCY8KzUxjf9+9kfZEw==
+  version "1.0.30001760"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001760.tgz"
+  integrity sha512-7AAMPcueWELt1p3mi13HR/LHH0TJLT11cnwDJEs3xA4+CK/PLKeO9Kl1oru24htkyUKtkGCvAx4ohB0Ttry8Dw==
 
 ccount@^2.0.0:
   version "2.0.1"

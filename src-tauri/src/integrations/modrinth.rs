@@ -166,6 +166,8 @@ pub struct ModrinthProject {
     pub game_versions: Option<Vec<String>>,
     #[serde(default)]
     pub loaders: Option<Vec<String>>,
+    #[serde(default)]
+    pub project_id: Option<String>, // Add missing project_id field
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -1226,4 +1228,15 @@ pub async fn get_modrinth_game_versions() -> Result<Vec<ModrinthGameVersion>> {
         game_versions.len()
     );
     Ok(game_versions)
+}
+
+/// Fetches project details for a single project from Modrinth using its ID or slug.
+/// https://docs.modrinth.com/api/operations/getproject/
+pub async fn get_project_details(project_id_or_slug: String) -> Result<ModrinthProject> {
+    let projects = get_multiple_projects(vec![project_id_or_slug]).await?;
+    if projects.is_empty() {
+        Err(AppError::Other("Project not found".to_string()))
+    } else {
+        Ok(projects.into_iter().next().unwrap())
+    }
 }

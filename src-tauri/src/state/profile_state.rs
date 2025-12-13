@@ -3160,6 +3160,11 @@ impl PostInitializationHandler for ProfileManager {
         // Load profiles with migrations (backup was already created above)
         self.ensure_profiles_loaded().await?;
 
+        // Check and install default modpack if needed
+        if let Err(e) = self.install_default_modpack_if_needed().await {
+            warn!("ProfileManager: Failed to install default modpack: {}", e);
+        }
+
         // Sync standard profiles - create editable copies for each GEG_version
         if let Err(e) = self.sync_standard_profiles().await {
             warn!("ProfileManager: Failed to sync standard profiles: {}", e);
@@ -3226,6 +3231,146 @@ pub fn default_profile_path() -> PathBuf {
     LAUNCHER_DIRECTORY.data_dir().join("profiles")
 }
 
+impl ProfileManager {
+    /// Checks if the default modpack should be installed and installs it if needed
+    /// This is called during initialization when no profiles exist and the default modpack
+    /// hasn't been installed yet
+    async fn install_default_modpack_if_needed(&self) -> Result<()> {
+        // Get the global state to access config manager
+        let state = match crate::state::state_manager::State::get().await {
+            Ok(state) => state,
+            Err(e) => {
+                warn!("ProfileManager: Could not get global state for default modpack check: {}", e);
+                return Ok(()); // Non-critical, skip installation
+            }
+        };
+
+        // Get current config to check if default modpack is already installed
+        let config = state.config_manager.get_config().await;
+        
+        // If default modpack is already installed, skip
+        if config.default_modpack_installed {
+            info!("ProfileManager: Default modpack already installed, skipping");
+            return Ok(());
+        }
+
+        // Check if there are any profiles
+        let profiles = self.list_profiles().await?;
+        if !profiles.is_empty() {
+            info!("ProfileManager: Profiles already exist, skipping default modpack installation");
+            // Update config to mark default modpack as installed to prevent future checks
+            let mut updated_config = config.clone();
+            updated_config.default_modpack_installed = true;
+            if let Err(e) = state.config_manager.set_config(updated_config).await {
+                warn!("ProfileManager: Failed to update config after checking profiles: {}", e);
+            }
+            return Ok(());
+        }
+
+        info!("ProfileManager: No profiles found and default modpack not installed, installing default modpack");
+
+        // Install the default modpack (bAT4S0rv from Modrinth)
+        // Project ID: bAT4S0rv
+        // We need to fetch the latest version and install it
+        match self.install_modpack_from_modrinth("bAT4S0rv").await {
+            Ok(_) => {
+                info!("ProfileManager: Successfully installed default modpack");
+                // Update config to mark default modpack as installed
+                let mut updated_config = config.clone();
+                updated_config.default_modpack_installed = true;
+                if let Err(e) = state.config_manager.set_config(updated_config).await {
+                    warn!("ProfileManager: Failed to update config after successful installation: {}", e);
+                }
+            }
+            Err(e) => {
+                error!("ProfileManager: Failed to install default modpack: {}", e);
+                // Don't update the config, so we can retry on next startup
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Installs a modpack from Modrinth by project ID
+    async fn install_modpack_from_modrinth(&self, project_id: &str) -> Result<()> {
+        info!("ProfileManager: Installing modpack from Modrinth project ID: {}", project_id);
+
+        // Fetch project details from Modrinth
+        let project = match crate::integrations::modrinth::get_project_details(project_id.to_string()).await {
+            Ok(project) => project,
+            Err(e) => {
+                error!("ProfileManager: Failed to fetch Modrinth project details for {}: {}", project_id, e);
+                return Err(e);
+            }
+        };
+
+        info!("ProfileManager: Found Modrinth project: {} ({})", project.title, project.id);
+
+        // Fetch versions for the project
+        let versions = match crate::integrations::modrinth::get_mod_versions(
+            project_id.to_string(),
+            None, // No loader filter
+            None, // No game version filter
+        ).await {
+            Ok(versions) => versions,
+            Err(e) => {
+                error!("ProfileManager: Failed to fetch Modrinth versions for {}: {}", project_id, e);
+                return Err(e);
+            }
+        };
+
+        // Sort versions by date_published to ensure we get the latest version
+        let mut sorted_versions = versions;
+        sorted_versions.sort_by(|a, b| {
+            // Parse the date strings and compare them
+            let a_date = chrono::DateTime::parse_from_rfc3339(&a.date_published);
+            let b_date = chrono::DateTime::parse_from_rfc3339(&b.date_published);
+            
+            match (a_date, b_date) {
+                (Ok(a_dt), Ok(b_dt)) => b_dt.cmp(&a_dt), // Descending order (newest first)
+                _ => std::cmp::Ordering::Equal, // If parsing fails, consider them equal
+            }
+        });
+
+        // Get the latest version (first in the sorted list)
+        let latest_version = match sorted_versions.first() {
+            Some(version) => version,
+            None => {
+                error!("ProfileManager: No versions found for Modrinth project {}", project_id);
+                return Err(crate::error::AppError::Other(format!(
+                    "No versions found for Modrinth project {}", project_id
+                )));
+            }
+        };
+
+        info!("ProfileManager: Selected latest version: {} ({})", latest_version.name, latest_version.id);
+
+        // Find the primary file
+        let primary_file = match latest_version.files.iter().find(|f| f.primary) {
+            Some(file) => file,
+            None => {
+                error!("ProfileManager: No primary file found for version {}", latest_version.id);
+                return Err(crate::error::AppError::Other(format!(
+                    "No primary file found for version {}", latest_version.id
+                )));
+            }
+        };
+
+        info!("ProfileManager: Found primary file: {} ({})", primary_file.filename, primary_file.url);
+
+        // Download and install the modpack
+        let profile_id = crate::integrations::mrpack::download_and_process_mrpack(
+            &primary_file.url,
+            &primary_file.filename,
+            Some(project_id.to_string()),
+            Some(latest_version.id.clone()),
+        ).await?;
+
+        info!("ProfileManager: Successfully installed modpack as profile with ID: {}", profile_id);
+
+        Ok(())
+    }
+}
 impl Default for ProfileSettings {
     fn default() -> Self {
         Self {

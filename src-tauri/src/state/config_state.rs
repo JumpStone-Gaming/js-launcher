@@ -1,4 +1,4 @@
-use crate::config::{ProjectDirsExt, LAUNCHER_DIRECTORY, update_custom_game_dir};
+use crate::config::{update_custom_game_dir, ProjectDirsExt, LAUNCHER_DIRECTORY};
 use crate::error::Result;
 use crate::state::post_init::PostInitializationHandler;
 use crate::state::profile_state::MemorySettings;
@@ -53,6 +53,8 @@ pub struct LauncherConfig {
     pub global_memory_settings: MemorySettings,
     #[serde(default)]
     pub custom_game_directory: Option<PathBuf>,
+    #[serde(default)] // Add default modpack installed tracking
+    pub default_modpack_installed: bool, // New field for tracking default modpack installation
 }
 
 fn default_config_version() -> u32 {
@@ -90,6 +92,11 @@ fn default_global_memory_settings() -> MemorySettings {
     }
 }
 
+// Add default function for the new field
+fn default_default_modpack_installed() -> bool {
+    false
+}
+
 impl Default for LauncherConfig {
     fn default() -> Self {
         Self {
@@ -107,6 +114,7 @@ impl Default for LauncherConfig {
             hide_on_process_start: default_hide_on_process_start(),
             global_memory_settings: default_global_memory_settings(),
             custom_game_directory: None,
+            default_modpack_installed: default_default_modpack_installed(), // Initialize to false by default
         }
     }
 }
@@ -154,19 +162,19 @@ impl ConfigManager {
                 // Update the stored config
                 let mut config = self.config.write().await;
                 *config = loaded_config.clone();
-                
+
                 // Update cache
                 update_custom_game_dir(loaded_config.custom_game_directory);
             }
             Err(e) => {
                 error!("Failed to parse config file: {}", e);
                 warn!("Attempting to migrate or preserve existing settings...");
-                
+
                 // Try to parse as generic JSON first to preserve user settings
                 match serde_json::from_str::<serde_json::Value>(&config_data) {
                     Ok(json_value) => {
                         info!("Config file is valid JSON, attempting migration...");
-                        
+
                         // Create backup of original config
                         let backup_path = self.config_path.with_extension("json.backup");
                         if let Err(backup_err) = fs::copy(&self.config_path, &backup_path).await {
@@ -174,89 +182,120 @@ impl ConfigManager {
                         } else {
                             info!("Created config backup at: {:?}", backup_path);
                         }
-                        
+
                         // Start with default config and try to migrate settings
                         let mut migrated_config = LauncherConfig::default();
-                        
+
                         // Migrate known fields that might exist
                         if let Some(obj) = json_value.as_object() {
                             // Migrate simple boolean fields
-                            if let Some(exp) = obj.get("is_experimental").and_then(|v| v.as_bool()) {
+                            if let Some(exp) = obj.get("is_experimental").and_then(|v| v.as_bool())
+                            {
                                 migrated_config.is_experimental = exp;
                             }
-                            if let Some(auto_check) = obj.get("auto_check_updates").and_then(|v| v.as_bool()) {
+                            if let Some(auto_check) =
+                                obj.get("auto_check_updates").and_then(|v| v.as_bool())
+                            {
                                 migrated_config.auto_check_updates = auto_check;
                             }
-                            if let Some(discord) = obj.get("enable_discord_presence").and_then(|v| v.as_bool()) {
+                            if let Some(discord) =
+                                obj.get("enable_discord_presence").and_then(|v| v.as_bool())
+                            {
                                 migrated_config.enable_discord_presence = discord;
                             }
-                            if let Some(beta) = obj.get("check_beta_channel").and_then(|v| v.as_bool()) {
+                            if let Some(beta) =
+                                obj.get("check_beta_channel").and_then(|v| v.as_bool())
+                            {
                                 migrated_config.check_beta_channel = beta;
                             }
-                            if let Some(logs) = obj.get("open_logs_after_starting").and_then(|v| v.as_bool()) {
+                            if let Some(logs) = obj
+                                .get("open_logs_after_starting")
+                                .and_then(|v| v.as_bool())
+                            {
                                 migrated_config.open_logs_after_starting = logs;
                             }
-                            if let Some(hide) = obj.get("hide_on_process_start").and_then(|v| v.as_bool()) {
+                            if let Some(hide) =
+                                obj.get("hide_on_process_start").and_then(|v| v.as_bool())
+                            {
                                 migrated_config.hide_on_process_start = hide;
                             }
-                            
+
                             // Migrate numeric fields
-                            if let Some(downloads) = obj.get("concurrent_downloads").and_then(|v| v.as_u64()) {
-                                if downloads > 0 && downloads <= 20 { // Reasonable bounds
+                            if let Some(downloads) =
+                                obj.get("concurrent_downloads").and_then(|v| v.as_u64())
+                            {
+                                if downloads > 0 && downloads <= 20 {
+                                    // Reasonable bounds
                                     migrated_config.concurrent_downloads = downloads as usize;
                                 }
                             }
-                            if let Some(io_limit) = obj.get("concurrent_io_limit").and_then(|v| v.as_u64()) {
-                                if io_limit > 0 && io_limit <= 50 { // Reasonable bounds
+                            if let Some(io_limit) =
+                                obj.get("concurrent_io_limit").and_then(|v| v.as_u64())
+                            {
+                                if io_limit > 0 && io_limit <= 50 {
+                                    // Reasonable bounds
                                     migrated_config.concurrent_io_limit = io_limit as usize;
                                 }
                             }
-                            
+
                             // Migrate string fields
-                            if let Some(grouping) = obj.get("profile_grouping_criterion").and_then(|v| v.as_str()) {
+                            if let Some(grouping) = obj
+                                .get("profile_grouping_criterion")
+                                .and_then(|v| v.as_str())
+                            {
                                 // Validate known values and migrate "none" to "group"
                                 match grouping {
                                     "loader" | "game_version" | "group" => {
-                                        migrated_config.profile_grouping_criterion = Some(grouping.to_string());
+                                        migrated_config.profile_grouping_criterion =
+                                            Some(grouping.to_string());
                                     }
                                     "none" => {
                                         warn!("Migrating legacy 'none' grouping to 'group'");
-                                        migrated_config.profile_grouping_criterion = Some("group".to_string());
+                                        migrated_config.profile_grouping_criterion =
+                                            Some("group".to_string());
                                     }
                                     _ => {
-                                        warn!("Unknown grouping criterion '{}', using default", grouping);
+                                        warn!(
+                                            "Unknown grouping criterion '{}', using default",
+                                            grouping
+                                        );
                                     }
                                 }
                             }
-                            
+
                             // Migrate UUID fields (with validation)
-                            if let Some(profile_str) = obj.get("last_played_profile").and_then(|v| v.as_str()) {
+                            if let Some(profile_str) =
+                                obj.get("last_played_profile").and_then(|v| v.as_str())
+                            {
                                 if let Ok(uuid) = Uuid::parse_str(profile_str) {
                                     migrated_config.last_played_profile = Some(uuid);
                                 }
                             }
-                            
+
                             // Migrate custom game directory
-                            if let Some(custom_dir_str) = obj.get("custom_game_directory").and_then(|v| v.as_str()) {
-                                migrated_config.custom_game_directory = Some(PathBuf::from(custom_dir_str));
+                            if let Some(custom_dir_str) =
+                                obj.get("custom_game_directory").and_then(|v| v.as_str())
+                            {
+                                migrated_config.custom_game_directory =
+                                    Some(PathBuf::from(custom_dir_str));
                             }
                         }
-                        
+
                         info!("Migration completed, saving migrated configuration");
                         let mut config = self.config.write().await;
                         *config = migrated_config.clone();
                         drop(config); // Release lock before save
-                        
+
                         // Save the migrated config
                         self.save_config().await?;
-                        
+
                         // Update cache
                         update_custom_game_dir(migrated_config.custom_game_directory);
                     }
                     Err(json_err) => {
                         error!("Config file is not valid JSON: {}", json_err);
                         warn!("Config file is corrupted, creating backup and using defaults");
-                        
+
                         // Create backup of corrupted file
                         let backup_path = self.config_path.with_extension("json.corrupted");
                         if let Err(backup_err) = fs::copy(&self.config_path, &backup_path).await {
@@ -264,9 +303,9 @@ impl ConfigManager {
                         } else {
                             info!("Backed up corrupted config to: {:?}", backup_path);
                         }
-                        
+
                         // Use default config and save it
-                self.save_config().await?;
+                        self.save_config().await?;
                     }
                 }
             }
@@ -403,11 +442,14 @@ impl ConfigManager {
                     );
                 }
                 if current.global_memory_settings.min != new_config.global_memory_settings.min
-                    || current.global_memory_settings.max != new_config.global_memory_settings.max {
+                    || current.global_memory_settings.max != new_config.global_memory_settings.max
+                {
                     info!(
                         "Changing global memory settings: {}MB-{}MB -> {}MB-{}MB",
-                        current.global_memory_settings.min, current.global_memory_settings.max,
-                        new_config.global_memory_settings.min, new_config.global_memory_settings.max
+                        current.global_memory_settings.min,
+                        current.global_memory_settings.max,
+                        new_config.global_memory_settings.min,
+                        new_config.global_memory_settings.max
                     );
                 }
                 if current.custom_game_directory != new_config.custom_game_directory {
@@ -433,6 +475,7 @@ impl ConfigManager {
                     hide_on_process_start: new_config.hide_on_process_start,
                     global_memory_settings: new_config.global_memory_settings,
                     custom_game_directory: new_config.custom_game_directory.clone(),
+                    default_modpack_installed: new_config.default_modpack_installed,
                 };
 
                 true

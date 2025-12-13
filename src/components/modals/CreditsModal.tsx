@@ -69,11 +69,7 @@ export function CreditsModal({ isOpen, onClose }: CreditsModalProps) {
                 className="w-10 h-10 rounded-full flex items-center justify-center"
                 style={{ backgroundColor: `${accentColor.value}40` }}
               >
-                <Icon
-                  icon="solar:code-2-bold"
-                  className="w-5 h-5"
-                  style={{ color: accentColor.value }}
-                />
+                <span className="text-lg">🪨</span>
               </div>
               <div className="min-h-[3rem] flex flex-col justify-center">
                 <div className="flex items-baseline gap-2">
@@ -86,15 +82,15 @@ export function CreditsModal({ isOpen, onClose }: CreditsModalProps) {
             <div className="flex items-center gap-2">
               <div className="text-right mr-3">
                 <p className="text-white/80 font-minecraft text-lg lowercase tracking-wide" title="(sirknubble did it better)">
-                  UI, Frontend, Design & Backend
+                  UI & Frontend, Backend & Core
                 </p>
               </div>
               <IconButton
                 icon={<Icon icon="solar:global-bold" className="w-4 h-4" />}
-                onClick={() => handleOpenUrl("https://jumpow.de")}
+                onClick={() => handleOpenUrl("https://jumpstone4477.de")}
                 variant="default"
                 size="sm"
-                title="Visit jumpow.de"
+                title="Visit jumpstone4477.de"
               />
             </div>
           </div>
@@ -106,7 +102,7 @@ export function CreditsModal({ isOpen, onClose }: CreditsModalProps) {
                 className="w-10 h-10 rounded-full flex items-center justify-center"
                 style={{ backgroundColor: `${accentColor.value}40` }}
               >
-                {/* Leer gelassen für Norisk */}
+                <span className="text-lg">⚡</span>
               </div>
               <div className="min-h-[3rem] flex flex-col justify-center">
                 <div className="flex items-baseline gap-2">
@@ -124,7 +120,15 @@ export function CreditsModal({ isOpen, onClose }: CreditsModalProps) {
           </div>
 
           {/* Open Source Licenses Button */}
-          <div className="flex justify-center pt-4">
+          <div className="flex justify-center pt-4 gap-4">
+            <Button
+              variant="ghost"
+              className="flex items-center gap-2 px-6 py-3 border border-[#ffffff20] hover:bg-white/5 transition-colors"
+              onClick={() => handleOpenUrl("http://grueneeule.de/gaming/launcher")}
+            >
+              <Icon icon="solar:github-bold" className="w-5 h-5" />
+              <span className="font-minecraft text-lg lowercase">View Website</span>
+            </Button>
             <Button
               variant="ghost"
               className="flex items-center gap-2 px-6 py-3 border border-[#ffffff20] hover:bg-white/5 transition-colors"
