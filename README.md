@@ -1,6 +1,6 @@
 ## Issues
 
-If you notice any bugs or missing features, you can let us know by opening an issue [here](https://github.com/GEG/issues/issues/new/choose).
+If you notice any bugs or missing features, you can let us know by opening an issue [here](https://github.com/JumpStone-Gaming/issues/issues/new/choose).
 
 ## License
 
