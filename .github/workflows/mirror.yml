@@ -18,8 +18,5 @@ jobs:
         uses: wearerequired/git-mirror-action@v1
         with:
           source-repo: "https://github.com/${{ github.repository }}.git"
-          # PASSE DIE NÄCHSTE ZEILE AN:
-          destination-repo: "https://codeberg.org/JumpStone-Gaming/js-launcher.git"
-        env:
-          GIT_USERNAME: "JumpStone"
-          GIT_PASSWORD: ${{ secrets.CODEBERG_TOKEN }}
+          # Hier bauen wir Username und Token direkt in die URL ein:
+          destination-repo: "https://JumpStone:${{ secrets.CODEBERG_TOKEN }}@codeberg.org/JumpStone-Gaming/js-launcher.git"
