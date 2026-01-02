@@ -28,7 +28,7 @@ Do the above and share your source code with everyone; just like we do.
 
    ```bash
    git clone --recurse-submodules https://github.com/JumpStone-Gaming/js-launcher
-   cd GEG-launcher
+   cd js-launcher
    ```
 
 2. Install dependencies:
