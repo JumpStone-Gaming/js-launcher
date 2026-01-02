@@ -27,7 +27,7 @@ Do the above and share your source code with everyone; just like we do.
 1. Clone the repository:
 
    ```bash
-   git clone --recurse-submodules https://github.com/GEG/GEG-launcher
+   git clone --recurse-submodules https://github.com/JumpStone-Gaming/js-launcher
    cd GEG-launcher
    ```
 
