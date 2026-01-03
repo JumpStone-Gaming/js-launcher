@@ -3,6 +3,18 @@ import { persist } from "zustand/middleware";
 import { setProfileGroupingPreference } from "../services/launcher-config-service";
 import { ModPlatform } from "../types/unified";
 
+// Define widget types and configuration
+export type WidgetType = 
+  | "lastPlayedModpacks" 
+  | "systemResources" 
+  | "quickSettings" 
+  | "clockTimeDisplay";
+
+export interface WidgetConfig {
+  id: string;
+  type: WidgetType;
+}
+
 export type AccentColor = {
   name: string;
   value: string;
@@ -224,6 +236,9 @@ interface ThemeState {
   // News section width
   newsSectionWidth: number;
   setNewsSectionWidth: (width: number) => void;
+  // Widget configuration
+  widgetConfig: WidgetConfig[];
+  setWidgetConfig: (config: WidgetConfig[]) => void;
 }
 
 export const useThemeStore = create<ThemeState>()(
@@ -249,6 +264,8 @@ export const useThemeStore = create<ThemeState>()(
       modSource: ModPlatform.Modrinth,
       // News section width - defaults
       newsSectionWidth: 375,
+      // Widget configuration - defaults
+      widgetConfig: [],
 
       setAccentColor: (color: AccentColor) => {
         set({ accentColor: color });
@@ -414,6 +431,11 @@ export const useThemeStore = create<ThemeState>()(
       // News section width
       setNewsSectionWidth: (width: number) => {
         set({ newsSectionWidth: width });
+      },
+      
+      // Widget configuration
+      setWidgetConfig: (config) => {
+        set({ widgetConfig: config });
       },
     }),    {
       name: "norisk-theme-storage",

@@ -86,7 +86,7 @@
     "createUpdaterArtifacts": false,
     "fileAssociations": [
       {
-        "ext": ["gegpack"],
+        "ext": ["jspack"],
         "name": "JS Pack File",
         "description": "JS Launcher Modpack File"
       }
