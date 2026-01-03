@@ -12,6 +12,7 @@ import { IconButton } from "../ui/buttons/IconButton";
 import { useThemeStore } from "../../store/useThemeStore";
 import { useVersionSelectionStore } from "../../store/version-selection-store";
 import { useProfileLaunch } from "../../hooks/useProfileLaunch";
+import { useTranslation } from "react-i18next";
 
 interface Version {
   id: string;
@@ -48,8 +49,15 @@ export function MainLaunchButton({
   const { selectedVersion, setSelectedVersion } = useVersionSelectionStore();
   const navigate = useNavigate();
 
+  const { t } = useTranslation();
+
   // Use the profile launch hook for launch logic
-  const { handleLaunch: hookHandleLaunch, isLaunching, statusMessage, launchState } = useProfileLaunch({
+  const {
+    handleLaunch: hookHandleLaunch,
+    isLaunching,
+    statusMessage,
+    launchState,
+  } = useProfileLaunch({
     profileId: selectedVersion,
     onLaunchSuccess: () => {
       setTransientSuccessActive(true);
@@ -61,7 +69,6 @@ export function MainLaunchButton({
       console.error("Launch error:", error);
     },
   });
-
 
   // Get profile-specific launch state from hook
   const isButtonLaunching = isLaunching;
@@ -100,9 +107,6 @@ export function MainLaunchButton({
     }
   }, [defaultVersion, versions, selectedVersion, setSelectedVersion]);
 
-
-
-
   const handleLaunch = async () => {
     if (!selectedVersion) return;
     await hookHandleLaunch();
@@ -131,20 +135,22 @@ export function MainLaunchButton({
   };
 
   const renderLaunchButtonContent = () => {
-    const actionText = isButtonLaunching ? "STOP" : "LAUNCH";
+    const actionText = isButtonLaunching
+      ? t("launcher.stop", "STOP")
+      : t("launcher.launch", "LAUNCH");
 
     let statusSubText: string | null | undefined = null;
     let statusColorClass = "opacity-85";
 
     if (transientSuccessActive && buttonStatusMessage === "STARTING!") {
-      statusSubText = buttonStatusMessage;
+      statusSubText = t("launcher.starting", "STARTING!");
       statusColorClass = "text-green-400";
     } else if (isButtonLaunching) {
-      statusSubText = buttonStatusMessage || "Launching...";
-      statusColorClass =
-        buttonStatusMessage
-          ? "opacity-90 text-white"
-          : "opacity-75";
+      statusSubText =
+        buttonStatusMessage || t("launcher.launching", "Launching...");
+      statusColorClass = buttonStatusMessage
+        ? "opacity-90 text-white"
+        : "opacity-75";
     } else if (buttonStatusMessage && launchState === LaunchState.ERROR) {
       statusSubText = buttonStatusMessage;
       statusColorClass = "text-red-400";
@@ -216,7 +222,7 @@ export function MainLaunchButton({
             variant={
               getButtonVariant() === "destructive" ? "destructive" : "3d"
             }
-            aria-label="Select version"
+            aria-label={t("launcher.selectVersion", "Select version")}
           />
         </div>
       </div>

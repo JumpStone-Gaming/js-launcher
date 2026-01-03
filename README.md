@@ -1,3 +1,11 @@
+# JS Launcher
+
+## Translations
+
+[![Crowdin](https://badges.crowdin.net/js-launcher/localized.svg)](https://crowdin.com/project/js-launcher)
+
+[We translate the JS Launcher on Crowdin.](https://crowdin.com/project/js-launcher)
+
 ## Issues
 
 If you notice any bugs or missing features, you can let us know by opening an issue [here](https://github.com/JumpStone-Gaming/issues/issues/new/choose).

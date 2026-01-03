@@ -37,16 +37,10 @@ import { ProfileDuplicateModal } from "../modals/ProfileDuplicateModal";
 import { exit, relaunch } from "@tauri-apps/plugin-process";
 import { Tooltip } from "../ui/Tooltip";
 import { toast } from "react-hot-toast";
+import LanguageSwitcher from "../LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
-const navItems = [
-  { id: "play", icon: "solar:play-bold", label: "Play" },
-  { id: "profiles", icon: "solar:user-id-bold", label: "Profiles" },
-  { id: "mods", icon: "solar:widget-bold", label: "Mods" },
-  { id: "skins", icon: "solar:emoji-funny-circle-bold", label: "Skins" },
-  { id: "capes", icon: "solar:shop-bold", label: "Capes" },
-  { id: "geg", icon: "solar:magic-stick-bold", label: "JS" },
-  { id: "settings", icon: "solar:settings-bold", label: "Settings" },
-];
+// navItems definition moved inside the component to access translation hook
 
 const appConfig = {
   version: "v0.5.22",
@@ -75,6 +69,30 @@ export function AppLayout({
     accentColor: themeAccentColor,
     accentColor,
   } = useThemeStore();
+
+  const { t } = useTranslation();
+
+  const navItems = [
+    { id: "play", icon: "solar:play-bold", label: t("tabs.play", "Play") },
+    {
+      id: "profiles",
+      icon: "solar:user-id-bold",
+      label: t("tabs.profiles", "Profiles"),
+    },
+    { id: "mods", icon: "solar:widget-bold", label: t("tabs.mods", "Mods") },
+    {
+      id: "skins",
+      icon: "solar:emoji-funny-circle-bold",
+      label: t("tabs.skins", "Skins"),
+    },
+    { id: "capes", icon: "solar:shop-bold", label: t("tabs.capes", "Capes") },
+    { id: "geg", icon: "solar:magic-stick-bold", label: t("tabs.geg", "JS") },
+    {
+      id: "settings",
+      icon: "solar:settings-bold",
+      label: t("tabs.settings", "Settings"),
+    },
+  ];
 
   const getComplementaryBackground = () => {
     const hexToRgb = (hex: string) => {
