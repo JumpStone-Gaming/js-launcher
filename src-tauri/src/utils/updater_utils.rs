@@ -52,7 +52,7 @@ fn get_download_url_for_platform(update_info: &UpdateInfo) -> AppResult<String> 
 
 /// Fetches the latest release information from the GEG Launcher releases JSON API
 pub async fn check_update_available(_app_handle: &AppHandle) -> AppResult<Option<UpdateInfo>> {
-    let url = "https://api.grueneeule.de/v1/geg/launcher/releases/releases.json";
+    let url = "https://www.jumpstone4477.de/gaming/api/v1/launcher/releases/releases.json";
 
     info!("[GEG Updater] Checking for updates from {}", url);
 

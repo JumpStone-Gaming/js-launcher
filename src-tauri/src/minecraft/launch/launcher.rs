@@ -234,7 +234,8 @@ impl MinecraftLauncher {
         command.current_dir(&self.game_directory);
 
         // Define paths
-        let natives_path = LAUNCHER_DIRECTORY.meta_dir()
+        let natives_path = LAUNCHER_DIRECTORY
+            .meta_dir()
             .join("natives")
             .join(&piston_meta.id);
 
@@ -292,7 +293,10 @@ impl MinecraftLauncher {
 
         // Add GEG client specific parameters
         // Only add token if we have credentials AND a GEG pack is selected in the profile
-        let has_GEG_pack = profile.as_ref().and_then(|p| p.selected_GEG_pack_id.as_ref()).is_some();
+        let has_GEG_pack = profile
+            .as_ref()
+            .and_then(|p| p.selected_GEG_pack_id.as_ref())
+            .is_some();
 
         // Add profile name for ingame display
         if let Some(p) = &profile {
@@ -303,29 +307,25 @@ impl MinecraftLauncher {
             if has_GEG_pack {
                 // Get the appropriate GEG token based on experimental mode setting
                 if let Some(GEG_token) = if params.is_experimental_mode {
-                    info!("[GEG Launcher] Using experimental mode token");
+                    info!("[JS Launcher] Using experimental mode token");
                     creds
                         .GEG_credentials
                         .experimental
                         .as_ref()
                         .map(|t| &t.value)
                 } else {
-                    info!("[GEG Launcher] Using production mode token");
-                    creds
-                        .GEG_credentials
-                        .production
-                        .as_ref()
-                        .map(|t| &t.value)
+                    info!("[JS Launcher] Using production mode token");
+                    creds.GEG_credentials.production.as_ref().map(|t| &t.value)
                 } {
-                    info!("[GEG Launcher] Adding GEG token to launch parameters");
+                    info!("[JS Launcher] Adding JS token to launch parameters");
                     command.arg(format!("-DGEG.token={}", GEG_token));
                 } else {
-                    info!("[GEG Launcher] No GEG token available for the selected mode");
+                    info!("[JS Launcher] No JS token available for the selected mode");
                 }
 
                 // Add experimental mode parameter
                 info!(
-                    "[GEG Launcher] Setting experimental mode: {}",
+                    "[JS Launcher] Setting experimental mode: {}",
                     params.is_experimental_mode
                 );
                 command.arg(format!(
@@ -333,10 +333,10 @@ impl MinecraftLauncher {
                     params.is_experimental_mode
                 ));
             } else {
-                info!("[GEG Launcher] No GEG pack selected, skipping GEG token and experimental mode parameters");
+                info!("[JS Launcher] No JS pack selected, skipping JS token and experimental mode parameters");
             }
         } else {
-            info!("[GEG Launcher] No credentials available, skipping GEG parameters");
+            info!("[JS Launcher] No credentials available, skipping JS parameters");
         }
 
         // Add Fabric specific mods folder argument if loader is Fabric
@@ -453,16 +453,16 @@ impl MinecraftLauncher {
         };
 
         // Extract optional profile information for process metadata
-        let (profile_loader, profile_loader_version, profile_GEG_pack, profile_name) =
-            match profile {
-                Some(p) => (
-                    Some(p.loader.as_str().to_string()),
-                    p.loader_version,
-                    p.selected_GEG_pack_id,
-                    Some(p.name),
-                ),
-                None => (None, None, None, None),
-            };
+        let (profile_loader, profile_loader_version, profile_GEG_pack, profile_name) = match profile
+        {
+            Some(p) => (
+                Some(p.loader.as_str().to_string()),
+                p.loader_version,
+                p.selected_GEG_pack_id,
+                Some(p.name),
+            ),
+            None => (None, None, None, None),
+        };
 
         // Get post-exit hook from config at launch time (not at exit time)
         let launcher_config = state.config_manager.get_config().await;

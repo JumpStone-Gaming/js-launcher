@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "GEG Launcher",
-  "version": "0.3.0",
-  "identifier": "de.grueneeule.geg-launcher",
+  "productName": "JS Launcher",
+  "version": "0.1.0",
+  "identifier": "de.jumpstone.js-launcher",
   "build": {
     "beforeDevCommand": "yarn dev",
     "devUrl": "http://localhost:1420",
@@ -26,7 +26,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "GEG Launcher",
+        "title": "JS Launcher",
         "width": 1280,
         "height": 800,
         "minWidth": 1080,
@@ -59,7 +59,7 @@
           "http://textures.minecraft.net",
           "https://crafatar.com",
           "https://media.forgecdn.net",
-          "https://cdn.grueneeule.de",
+          "https://jumpstone4477.de",
           "data:",
           "https://qr-generator-putuwaw.vercel.app"
         ]
@@ -87,8 +87,8 @@
     "fileAssociations": [
       {
         "ext": ["gegpack"],
-        "name": "GEG Pack File",
-        "description": "GEG Launcher Modpack File"
+        "name": "JS Pack File",
+        "description": "JS Launcher Modpack File"
       }
     ],
     "windows": {

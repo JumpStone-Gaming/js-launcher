@@ -26,14 +26,17 @@ import { RetroGridEffect } from "../effects/RetroGridEffect";
 import PlainBackground from "../effects/PlainBackground";
 import * as ConfigService from "../../services/launcher-config-service";
 import { SocialsModal } from "../modals/SocialsModal";
-import { checkUpdateAvailable, downloadAndInstallUpdate } from "../../services/nrc-service";
+import {
+  checkUpdateAvailable,
+  downloadAndInstallUpdate,
+} from "../../services/nrc-service";
 import type { UpdateInfo } from "../../types/updater";
 import { ProfileWizardV2Modal } from "../modals/ProfileWizardV2Modal";
 import { ProfileSettingsModal } from "../modals/ProfileSettingsModal";
 import { ProfileDuplicateModal } from "../modals/ProfileDuplicateModal";
-import { exit, relaunch } from '@tauri-apps/plugin-process';
+import { exit, relaunch } from "@tauri-apps/plugin-process";
 import { Tooltip } from "../ui/Tooltip";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 
 const navItems = [
   { id: "play", icon: "solar:play-bold", label: "Play" },
@@ -41,7 +44,7 @@ const navItems = [
   { id: "mods", icon: "solar:widget-bold", label: "Mods" },
   { id: "skins", icon: "solar:emoji-funny-circle-bold", label: "Skins" },
   { id: "capes", icon: "solar:shop-bold", label: "Capes" },
-  { id: "geg", icon: "solar:magic-stick-bold", label: "GEG" },
+  { id: "geg", icon: "solar:magic-stick-bold", label: "JS" },
   { id: "settings", icon: "solar:settings-bold", label: "Settings" },
 ];
 
@@ -67,7 +70,11 @@ export function AppLayout({
   const closeRef = useRef<HTMLDivElement>(null);
   const { currentEffect } = useBackgroundEffectStore();
   const { qualityLevel } = useQualitySettingsStore();
-  const { isBackgroundAnimationEnabled, accentColor: themeAccentColor, accentColor } = useThemeStore();
+  const {
+    isBackgroundAnimationEnabled,
+    accentColor: themeAccentColor,
+    accentColor,
+  } = useThemeStore();
 
   const getComplementaryBackground = () => {
     const hexToRgb = (hex: string) => {
@@ -131,7 +138,7 @@ export function AppLayout({
     const setupWindowControls = async () => {
       try {
         const tauriModule = await import("@tauri-apps/api/window").catch(
-          () => null,
+          () => null
         );
 
         if (tauriModule) {
@@ -140,24 +147,22 @@ export function AppLayout({
 
           if (minimizeRef.current) {
             minimizeRef.current.addEventListener("click", () =>
-              currentWindow.minimize(),
+              currentWindow.minimize()
             );
           }
 
           if (maximizeRef.current) {
             maximizeRef.current.addEventListener("click", () =>
-              currentWindow.toggleMaximize(),
+              currentWindow.toggleMaximize()
             );
           }
 
           if (closeRef.current) {
-            closeRef.current.addEventListener("click", () =>
-              exit(0),
-            );
+            closeRef.current.addEventListener("click", () => exit(0));
           }
         } else {
           console.log(
-            "Tauri API not available, window controls will be decorative only",
+            "Tauri API not available, window controls will be decorative only"
           );
         }
       } catch (error) {
@@ -247,9 +252,11 @@ export function AppLayout({
           return `rgba(${r}, ${g}, ${b}, 0.05)`;
         };
         return (
-          <div 
+          <div
             className="absolute inset-0"
-            style={{ backgroundColor: hexToRgbaWithLowOpacity(themeAccentColor.value) }}
+            style={{
+              backgroundColor: hexToRgbaWithLowOpacity(themeAccentColor.value),
+            }}
           ></div>
         );
       case BACKGROUND_EFFECTS.PLAIN_BACKGROUND:
@@ -350,18 +357,18 @@ interface HeaderBarProps {
 function HeaderBar({ minimizeRef, maximizeRef, closeRef }: HeaderBarProps) {
   const accentColor = useThemeStore((state) => state.accentColor);
   const [appVersion, setAppVersion] = useState<string | null>(null);
-  const [availableUpdate, setAvailableUpdate] = useState<UpdateInfo | null>(null);
+  const [availableUpdate, setAvailableUpdate] = useState<UpdateInfo | null>(
+    null
+  );
 
   const handleUpdateClick = async () => {
     try {
-      await toast.promise(
-        downloadAndInstallUpdate(),
-        {
-          loading: 'Downloading and installing update...',
-          success: 'Update installed successfully! Application will restart.',
-          error: (err) => `Update failed: ${err instanceof Error ? err.message : String(err)}`,
-        }
-      );
+      await toast.promise(downloadAndInstallUpdate(), {
+        loading: "Downloading and installing update...",
+        success: "Update installed successfully! Application will restart.",
+        error: (err) =>
+          `Update failed: ${err instanceof Error ? err.message : String(err)}`,
+      });
     } catch (error) {
       console.error("Failed to download and install update:", error);
       // Toast error is already handled by the promise toast
@@ -390,9 +397,15 @@ function HeaderBar({ minimizeRef, maximizeRef, closeRef }: HeaderBarProps) {
 
     const warningRgb = { r: 245, g: 158, b: 100 }; // Amber base
 
-    const mixedR = Math.round(rgb.r * accentWeight + warningRgb.r * warningWeight);
-    const mixedG = Math.round(rgb.g * accentWeight + warningRgb.g * warningWeight);
-    const mixedB = Math.round(rgb.b * accentWeight + warningRgb.b * warningWeight);
+    const mixedR = Math.round(
+      rgb.r * accentWeight + warningRgb.r * warningWeight
+    );
+    const mixedG = Math.round(
+      rgb.g * accentWeight + warningRgb.g * warningWeight
+    );
+    const mixedB = Math.round(
+      rgb.b * accentWeight + warningRgb.b * warningWeight
+    );
 
     return `rgb(${mixedR}, ${mixedG}, ${mixedB})`;
   };
@@ -408,27 +421,30 @@ function HeaderBar({ minimizeRef, maximizeRef, closeRef }: HeaderBarProps) {
       }
     };
 
-  const checkForUpdates = async () => {
-    try {
-      const updateInfo = await checkUpdateAvailable();
-      if (updateInfo) {
-        console.log("Update available:", updateInfo);
-        setAvailableUpdate(updateInfo);
+    const checkForUpdates = async () => {
+      try {
+        const updateInfo = await checkUpdateAvailable();
+        if (updateInfo) {
+          console.log("Update available:", updateInfo);
+          setAvailableUpdate(updateInfo);
+        }
+      } catch (error) {
+        console.error("Failed to check for updates:", error);
+        // Don't show error to user, just silently fail
       }
-    } catch (error) {
-      console.error("Failed to check for updates:", error);
-      // Don't show error to user, just silently fail
-    }
-  };
+    };
 
     fetchVersion();
     checkForUpdates();
 
     // Check for updates every 4 hours (4 * 60 * 60 * 1000 = 14,400,000 ms)
-    const updateCheckInterval = setInterval(() => {
-      console.log("Performing scheduled update check...");
-      checkForUpdates();
-    }, 4 * 60 * 60 * 1000);
+    const updateCheckInterval = setInterval(
+      () => {
+        console.log("Performing scheduled update check...");
+        checkForUpdates();
+      },
+      4 * 60 * 60 * 1000
+    );
 
     return () => {
       clearInterval(updateCheckInterval);
@@ -442,7 +458,7 @@ function HeaderBar({ minimizeRef, maximizeRef, closeRef }: HeaderBarProps) {
         borderColor: `${accentColor.value}40`,
         backgroundColor: `rgba(${Number.parseInt(accentColor.value.slice(1, 3), 16)}, ${Number.parseInt(
           accentColor.value.slice(3, 5),
-          16,
+          16
         )}, ${Number.parseInt(accentColor.value.slice(5, 7), 16)}, 0.01)`,
       }}
       data-tauri-drag-region
@@ -456,11 +472,14 @@ function HeaderBar({ minimizeRef, maximizeRef, closeRef }: HeaderBarProps) {
               className="font-minecraft text-4xl tracking-wider font-bold lowercase text-shadow"
               data-tauri-drag-region
             >
-              GEG Launcher
+              JS Launcher
             </h1>
             {availableUpdate && (
               <Tooltip content={`Click to update: ${availableUpdate.version}`}>
-                <div className="cursor-pointer mt-2.5" onClick={handleUpdateClick}>
+                <div
+                  className="cursor-pointer mt-2.5"
+                  onClick={handleUpdateClick}
+                >
                   <Icon
                     icon="solar:download-minimalistic-bold"
                     className="w-6 h-6 transition-colors"

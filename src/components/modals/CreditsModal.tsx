@@ -41,12 +41,12 @@ export function CreditsModal({ isOpen, onClose }: CreditsModalProps) {
                 className="w-10 h-10 rounded-full flex items-center justify-center"
                 style={{ backgroundColor: `${accentColor.value}40` }}
               >
-                <span className="text-lg">🦉</span>
+                <span className="text-lg">🎮</span>
               </div>
               <div className="min-h-[3rem] flex flex-col justify-center">
                 <div className="flex items-baseline gap-2">
                   <span className="text-2xl font-minecraft text-white lowercase tracking-wider">
-                    GrüneEule
+                    JS Gaming
                   </span>
                 </div>
               </div>
@@ -54,10 +54,10 @@ export function CreditsModal({ isOpen, onClose }: CreditsModalProps) {
             <div className="flex items-center gap-2">
               <IconButton
                 icon={<Icon icon="solar:global-bold" className="w-4 h-4" />}
-                onClick={() => handleOpenUrl("https://grueneeule.de")}
+                onClick={() => handleOpenUrl("https://jumpstone4477.de/gaming")}
                 variant="default"
                 size="sm"
-                title="Visit grueneeule.de"
+                title="Visit jumpstone4477.de/gaming"
               />
             </div>
           </div>
@@ -107,7 +107,7 @@ export function CreditsModal({ isOpen, onClose }: CreditsModalProps) {
               <div className="min-h-[3rem] flex flex-col justify-center">
                 <div className="flex items-baseline gap-2">
                   <h4 className="text-2xl font-minecraft text-white lowercase tracking-wider">
-                    Norisk
+                    Norisk Launcher
                   </h4>
                 </div>
               </div>
@@ -124,7 +124,7 @@ export function CreditsModal({ isOpen, onClose }: CreditsModalProps) {
             <Button
               variant="ghost"
               className="flex items-center gap-2 px-6 py-3 border border-[#ffffff20] hover:bg-white/5 transition-colors"
-              onClick={() => handleOpenUrl("http://grueneeule.de/gaming/launcher")}
+              onClick={() => handleOpenUrl("https://jumpstone4477.de/gaming/launcher")}
             >
               <Icon icon="solar:github-bold" className="w-5 h-5" />
               <span className="font-minecraft text-lg lowercase">View Website</span>
@@ -132,7 +132,7 @@ export function CreditsModal({ isOpen, onClose }: CreditsModalProps) {
             <Button
               variant="ghost"
               className="flex items-center gap-2 px-6 py-3 border border-[#ffffff20] hover:bg-white/5 transition-colors"
-              onClick={() => handleOpenUrl("https://github.com/GruneEule/geg-launcher/blob/main/LICENSE")}
+              onClick={() => handleOpenUrl("https://codeberg.org/JumpStone-Gaming/js-launcher/src/branch/main/LICENSE")}
             >
               <Icon icon="solar:external-link-bold" className="w-5 h-5" />
               <span className="font-minecraft text-lg lowercase">View License</span>

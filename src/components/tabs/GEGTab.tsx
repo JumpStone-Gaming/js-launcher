@@ -8,21 +8,21 @@ import { Card } from "../ui/Card";
 const socialLinks = [
   {
     name: "Discord",
-    url: "https://grueneeule.de/dc",
+    url: "https://discord.gg/yKU4Q2mHj8",
     icon: "logos:discord-icon",
     color: "bg-[#5865F2] hover:bg-[#4752C4]",
     text: "Discord",
   },
   {
     name: "YouTube",
-    url: "https://www.youtube.com/@grueneeule",
+    url: "https://www.youtube.com/@JumpStone44477",
     icon: "logos:youtube-icon",
     color: "bg-[#FF0000] hover:bg-[#CC0000]",
     text: "YouTube",
   },
   {
     name: "Twitch",
-    url: "http://twitch.tv/grueneeulede",
+    url: "https://twitch.tv/jumpstone444777",
     icon: "logos:twitch",
     color: "bg-[#9146FF] hover:bg-[#772ce8]",
     text: "Twitch",
@@ -34,9 +34,12 @@ export default function GEGTab() {
     <div className="p-6">
       <div className="max-w-2xl mx-auto">
         <Card className="p-6 text-center" variant="flat">
-          <h2 className="text-3xl font-bold">Werde Teil der GrüneEule Community!</h2>
+          <h2 className="text-3xl font-bold">
+            Werde Teil der JS Gaming Community!
+          </h2>
           <p className="text-white/70 mt-2 max-w-md mx-auto">
-            Vernetze dich mit anderen Spielern, nimm an Events teil und bleib immer auf dem Laufenden.
+            Vernetze dich mit anderen Spielern, nimm an Events teil und bleib
+            immer auf dem Laufenden.
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">

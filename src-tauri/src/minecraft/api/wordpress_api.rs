@@ -38,7 +38,7 @@ impl WordPressApi {
 
     /// Retrieves the base URL for the GEG JSON API
     pub fn get_api_base() -> String {
-        String::from("https://api.grueneeule.de/v1/geg/launcher/blog")
+        String::from("https://www.jumpstone4477.de/gaming/api/v1/launcher/blog")
     }
 
     /// Fetch blog posts from GEG JSON API

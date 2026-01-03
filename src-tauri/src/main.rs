@@ -129,7 +129,7 @@ async fn main() {
         eprintln!("FEHLER: Logging konnte nicht initialisiert werden: {}", e);
     }
 
-    info!("Starting GEG Launcher...");
+    info!("Starting JS Launcher...");
 
     tauri::Builder::default()
         .plugin(tauri_plugin_process::init())
@@ -160,14 +160,14 @@ async fn main() {
             let app_handle = app.handle().clone();
 
             // --- Initialize System Tray (Tauri 2.0) ---
-            let show_item = MenuItem::with_id(app, "show", "Show GEG Launcher", true, None::<&str>)?;
+            let show_item = MenuItem::with_id(app, "show", "Show JS Launcher", true, None::<&str>)?;
             let quit_item = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show_item, &quit_item])?;
 
             let _tray = TrayIconBuilder::new()
                 .menu(&menu)
                 .show_menu_on_left_click(false)
-                .tooltip("GEG Client Launcher")
+                .tooltip("JS Client Launcher")
                 .icon(app.default_window_icon().unwrap().clone())
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "show" => {

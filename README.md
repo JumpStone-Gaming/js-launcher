@@ -61,5 +61,5 @@ Do the above and share your source code with everyone; just like we do.
 
 ## Contributing
 
-We appreciate contributions. So if you want to support us, feel free to make changes to GEG source code and submit a pull request.
+We appreciate contributions. So if you want to support us, feel free to make changes to JS Launcher source code and submit a pull request.
 Feel free to join the Discord: https://discord.gg/6axjyHjdew

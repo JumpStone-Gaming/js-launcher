@@ -39,13 +39,13 @@ fn get_download_url_for_platform(update_info: &UpdateInfo) -> AppResult<String> 
     }
 }
 
-/// Fetches the latest release information from the GEG Launcher releases JSON API
+/// Fetches the latest release information from the JS Launcher releases JSON API
 pub async fn check_update_available(
     _app_handle: &AppHandle,
 ) -> AppResult<Option<UpdateInfo>> {
-    let url = "https://api.grueneeule.de/v1/geg/launcher/releases/releases.json";
+    let url = "https://www.jumpstone4477.de/gaming/api/v1/launcher/releases/releases.json";
     
-    info!("[GEG Updater] Checking for updates from {}", url);
+    info!("[JS Updater] Checking for updates from {}", url);
 
     let client = reqwest::Client::new();
     let response = client
@@ -53,12 +53,12 @@ pub async fn check_update_available(
         .send()
         .await
         .map_err(|e| {
-            error!("[GEG Updater] Failed to fetch releases: {}", e);
+            error!("[JS Updater] Failed to fetch releases: {}", e);
             AppError::RequestError(format!("Failed to fetch update information: {}", e))
         })?;
 
     if !response.status().is_success() {
-        error!("[GEG Updater] HTTP error: {}", response.status());
+        error!("[JS Updater] HTTP error: {}", response.status());
         return Err(AppError::RequestError(format!(
             "HTTP error: {}",
             response.status()
@@ -69,7 +69,7 @@ pub async fn check_update_available(
         .json()
         .await
         .map_err(|e| {
-            error!("[GEG Updater] Failed to parse JSON: {}", e);
+            error!("[JS Updater] Failed to parse JSON: {}", e);
             AppError::ParseError(format!("Failed to parse update information: {}", e))
         })?;
 
@@ -77,12 +77,12 @@ pub async fn check_update_available(
     
     if update_info.version != app_version {
         info!(
-            "[GEG Updater] Update available: {} (current: {})",
+            "[JS Updater] Update available: {} (current: {})",
             update_info.version, app_version
         );
         Ok(Some(update_info))
     } else {
-        info!("[GEG Updater] Application is up to date");
+        info!("[JS Updater] Application is up to date");
         Ok(None)
     }
 }
@@ -92,7 +92,7 @@ pub async fn check_update_available(
 pub async fn download_and_install_update(update_info: &UpdateInfo) -> AppResult<()> {
     let download_url = get_download_url_for_platform(update_info)?;
     
-    info!("[GEG Updater] Starting download from: {}", download_url);
+    info!("[JS Updater] Starting download from: {}", download_url);
 
     let client = reqwest::Client::new();
     let response = client
@@ -100,7 +100,7 @@ pub async fn download_and_install_update(update_info: &UpdateInfo) -> AppResult<
         .send()
         .await
         .map_err(|e| {
-            error!("[GEG Updater] Download failed: {}", e);
+            error!("[JS Updater] Download failed: {}", e);
             AppError::RequestError(format!("Download failed: {}", e))
         })?;
 
@@ -112,7 +112,7 @@ pub async fn download_and_install_update(update_info: &UpdateInfo) -> AppResult<
     let filename = download_url
         .split('/')
         .last()
-        .unwrap_or("GEG-Launcher-Update");
+        .unwrap_or("JS-Launcher-Update");
 
     let file_path = downloads_dir.join(filename);
 
@@ -129,11 +129,11 @@ pub async fn download_and_install_update(update_info: &UpdateInfo) -> AppResult<
     tokio::fs::write(&file_path, bytes)
         .await
         .map_err(|e| {
-            error!("[GEG Updater] Failed to write file: {}", e);
+            error!("[JS Updater] Failed to write file: {}", e);
             AppError::Io(e)
         })?;
 
-    info!("[GEG Updater] Download completed: {}", file_path.display());
+    info!("[JS Updater] Download completed: {}", file_path.display());
 
     // Open the downloads folder
     #[cfg(target_os = "windows")]
@@ -221,7 +221,7 @@ pub async fn create_updater_window(app_handle: &AppHandle) -> tauri::Result<Webv
         "updater",                              // Unique label
         WebviewUrl::App("updater.html".into()), // Load local HTML file
     )
-    .title("GEG Updater")
+    .title("JS Updater")
     .inner_size(325.0, 400.0)
     .resizable(false)
     .center()
