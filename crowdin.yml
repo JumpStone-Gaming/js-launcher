@@ -1,8 +1,3 @@
-project_id: "582481"
-api_token_env: CROWDIN_PERSONAL_TOKEN
-base_path: "."
-preserve_hierarchy: true
-
 files:
   - source: /public/locales/en/*.json
     translation: /public/locales/%two_letters_code%/%original_file_name%
