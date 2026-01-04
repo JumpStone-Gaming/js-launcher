@@ -72,12 +72,12 @@
     "postExitHook": "Post-Exit Haken"
   },
   "tooltips": {
-    "autoUpdates": "Automatically check for and download launcher updates when available.",
-    "discordPresence": "Show your current game and launcher status in Discord. Displays what you're playing to friends.",
-    "betaUpdates": "Receive beta versions and pre-release updates. These may be unstable and contain bugs.",
-    "experimentalMode": "Enable experimental features and unstable functionality. May cause crashes or unexpected behavior.",
-    "openLogs": "Automatically open the game logs window when launching Minecraft. Useful for debugging issues.",
-    "hideWindow": "Automatically hide the launcher window when Minecraft starts. Reduces desktop clutter during gameplay.",
+    "autoUpdates": "Automatisch nach Launcher-Updates suchen und diese herunterladen, sobald sie verfügbar sind.",
+    "discordPresence": "Zeige deinen aktuellen Spiel- und Launcher-Status in Discord an. Zeigt deinen Freunden, was du gerade spielst.",
+    "betaUpdates": "Erhalten Sie Beta-Versionen und Vorab-Updates. Diese können instabil sein und Fehler enthalten.",
+    "experimentalMode": "Aktivieren Sie experimentelle Funktionen und instabile Funktionalitäten. Dies kann zu Abstürzen oder unerwartetem Verhalten führen.",
+    "openLogs": "Öffnet beim Starten von Minecraft automatisch das Fenster mit den Spielprotokollen. Nützlich für die Fehlerbehebung.",
+    "hideWindow": "Der Launcher wird beim Start von Minecraft automatisch ausgeblendet. Reduziert Unordnung auf dem Desktop während des Spiels.",
     "concurrentDownloads": "Maximum number of files downloaded simultaneously. Lower values reduce bandwidth usage but slow downloads.",
     "concurrentIoOperations": "Maximum number of files written to disk simultaneously. Lower values reduce disk stress and I/O errors.",
     "borderRadius": "Stelle die Rundung der Ecken aller UI-Elemente ein. 0px ist quadratisch(Minecraft-style), während mehr px die Ecken Runder machen."
