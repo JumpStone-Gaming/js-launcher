@@ -80,7 +80,7 @@
     "hideWindow": "Automatically hide the launcher window when Minecraft starts. Reduces desktop clutter during gameplay.",
     "concurrentDownloads": "Maximum number of files downloaded simultaneously. Lower values reduce bandwidth usage but slow downloads.",
     "concurrentIoOperations": "Maximum number of files written to disk simultaneously. Lower values reduce disk stress and I/O errors.",
-    "borderRadius": "Adjust the corner roundness of all UI elements. 0px is square (Minecraft-style), higher values make corners more rounded."
+    "borderRadius": "Stelle die Rundung der Ecken aller UI-Elemente ein. 0px ist quadratisch(Minecraft-style), während mehr px die Ecken Runder machen."
   },
   "effects": {
     "matrixRain": "Matrix Regen",
@@ -140,7 +140,7 @@
     "uploadCape": "Cape hochladen",
     "deleteCape": "Cape löschen",
     "confirmDelete": "Löschen bestätigen",
-    "deleteWarning": "Are you sure you want to delete this cape? This action cannot be undone.",
+    "deleteWarning": "Bist du dir sicher, dass du dieses Cape löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.",
     "upload": "Hochladen",
     "cancel": "Abbrechen"
   },
