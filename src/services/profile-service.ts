@@ -23,8 +23,9 @@ import type {
   ResourcePackInfo,
   ShaderPackInfo,
 } from "../types/modrinth";
-import { GEGVersionsConfig } from "../types/GEGVersions";
 import { FileNode } from "../types/fileSystem";
+import { ModrinthService } from "./modrinth-service";
+import { GEGVersionsConfig } from "../types/noriskVersions";
 
 export async function listProfiles(): Promise<Profile[]> {
   return invoke<Profile[]>("list_profiles");
@@ -144,6 +145,41 @@ export async function updateModrinthModVersion(
     modInstanceId,
     newVersionDetails,
   });
+}
+
+export async function installCapeMod(
+  profileId: string,
+  minecraftVersion: string,
+  loader: string,
+): Promise<void> {
+  // Get available versions for the cape mod project
+  const versions = await ModrinthService.getModVersions("9gNVPfzw", [loader], [minecraftVersion]);
+  
+  if (versions.length === 0) {
+    throw new Error(`No compatible version found for cape mod with loader ${loader} and Minecraft version ${minecraftVersion}`);
+  }
+  
+  // Get the first (most recent) compatible version
+  const latestVersion = versions[0];
+  const primaryFile = latestVersion.files.find(f => f.primary) || latestVersion.files[0];
+  
+  if (!primaryFile) {
+    throw new Error("No downloadable file found for the cape mod");
+  }
+  
+  // Install the mod to the profile
+  return await addModrinthModToProfile(
+    profileId,
+    latestVersion.project_id,
+    latestVersion.id,
+    primaryFile.filename,
+    primaryFile.url,
+    primaryFile.hashes?.sha1,
+    latestVersion.search_hit?.title || latestVersion.name,
+    latestVersion.version_number,
+    latestVersion.loaders,
+    latestVersion.game_versions,
+  );
 }
 
 export async function getLocalResourcepacks(
